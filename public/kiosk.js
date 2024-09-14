@@ -82,6 +82,7 @@ function InitKiosk() {
 
     kioskPeer.on('close', () => {
         console.log('Peer connection closed');
+        kioskVideo.style.visibility = "hidden";
         InitKiosk();
     });
 
@@ -95,7 +96,12 @@ function InitKiosk() {
 
     kioskPeer.on('error', () => {
         console.log('Peer Connection Error');
+        kioskVideo.style.visibility = "hidden";
         window.location.reload();
+    })
+
+    kioskPeer.on('connect', () => {
+        kioskVideo.style.visibility = "visible";
     })
 }
 
