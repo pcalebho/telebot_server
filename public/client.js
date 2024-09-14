@@ -1,11 +1,16 @@
 import { speedBindings, gimbalBindings, moveBindings } from './bindings.js';
 
 const socket = io();
-let connectedUser = null;
-let clientPeer, localStream, kioskVideo, clientVideo;
+let clientPeer, localStream, kioskVideo, clientVideo, rosbridgeStatus;
 
 kioskVideo = document.getElementById('remoteVideo');
 clientVideo = document.getElementById('localVideo');
+rosbridgeStatus = document.getElementById('status');
+
+/*
+TODO
+Make client ping kiosk browser for rosbridge status
+*/
 
 // Request user media
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })

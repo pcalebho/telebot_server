@@ -21,20 +21,25 @@ io.on('connection', (socket) => {
     console.log('User connected:', socket.id);
 
 
-    //when receiving an offer from 
+    //Send Client WebRTC offer to Kiosk's Browser
     socket.on('offer', (offer) => {
         console.log('Offer from:', socket.id)
         socket.broadcast.emit('offer', offer)
     });
+
+    //Send Kiosk's answer back to client browser
     socket.on('answer',(answer) => {
         console.log('Answer from:', socket.id)
         socket.broadcast.emit('answer', answer)
     });
 
-    // socket.on('disconnect', () => {
-    //     console.log('User disconnected:', socket.id);
-    //     io.to.emit('user dc', socket.id);
-    // });
+    socket.on('disconnect', () => {
+        console.log('User disconnected:', socket.id);
+    });
+
+    socket.on('rosbridge status', (data) => {
+        console.log('Rosbridge Status', data)
+    });
 });
 
 

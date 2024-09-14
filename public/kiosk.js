@@ -12,15 +12,18 @@ kioskVideo = document.getElementById('remoteVideo');
 
 const ros = new ROSLIB.Ros({ url : 'ws://192.168.1.135:8080' });
     ros.on('connection', () => {
+    socket.emit('rosbridge status', 'successful')
     console.log("Successful RosBridge Websocket Connection");
 });
 
 ros.on('error', (error) => {
     console.log("Error RosBridge Websocket Connection");
+    socket.emit('rosbridge status', 'error')
 });
 
 ros.on('close', () => {
     console.log("Closed RosBridge Websocket Connection");
+    socket.emit('rosbridge status', 'closed')
 });
 
 const cmd_vel_publisher = new ROSLIB.Topic({
