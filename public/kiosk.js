@@ -92,6 +92,11 @@ function InitKiosk() {
 
         readKey(sentKey)
     });
+
+    kioskPeer.on('error', () => {
+        console.log('Peer Connection Error');
+        window.location.reload();
+    })
 }
 
 
