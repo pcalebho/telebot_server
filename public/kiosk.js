@@ -11,7 +11,7 @@ let turn = 1.0;
 kioskVideo = document.getElementById('remoteVideo');
 
 //using a dynamic dns makes it easier to transport between places, as I don't have to reupdate the server code
-const ros = new ROSLIB.Ros({ url : 'wss://telepresencerobot.duckdns.org:8080' });
+const ros = new ROSLIB.Ros({ url : 'wss://telepresencerobot.duckdns.org' });
     ros.on('connection', () => {
     socket.emit('rosbridge status', 'successful')
     console.log("Successful RosBridge Websocket Connection");
