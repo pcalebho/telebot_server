@@ -8,6 +8,8 @@ let kioskPeer, kioskStream, kioskVideo;
 let speed = 1.0;
 let turn = 1.0;
 
+(function(){document.querySelector("body").requestFullscreen();})();
+
 kioskVideo = document.getElementById('remoteVideo');
 
 //using a dynamic dns makes it easier to transport between places, as I don't have to reupdate the server code
