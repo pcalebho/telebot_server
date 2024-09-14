@@ -81,9 +81,11 @@ function InitKiosk() {
     });
 
     kioskPeer.on('close', () => {
-        console.log('Peer connection closed');
         kioskVideo.style.visibility = "hidden";
-        InitKiosk();
+        console.log('Peer connection closed');
+        requestAnimationFrame(() => {
+            InitKiosk();
+        });
     });
 
     kioskPeer.on('data', data => {
