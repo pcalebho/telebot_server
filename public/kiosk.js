@@ -20,7 +20,6 @@ let kioskPeer, kioskStream, kioskVideo;
 
 kioskVideo = document.getElementById('remoteVideo');
 
-// const websocketURL = 'ws://192.168.1.135:8080'
 const websocketURL =  'wss://telepresencerobot.duckdns.org'
 
 
