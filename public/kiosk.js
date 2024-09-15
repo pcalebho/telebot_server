@@ -3,17 +3,28 @@ import { speedBindings, gimbalBindings, moveBindings } from './bindings.js';
 const socket = io({
     query: { page: 'kiosk' }
 });
-const speed_limit = 1000.0;
-const turn_limit = 50.0;
+
+const speed_limit = 0.8;
+const turn_limit = 0.8;
+const min_speed_limit = 0.1;
+const min_turn_limit = 0.1;
+
+let speed = 0.5;
+let turn = 0.5;
+
+const maxReconnectAttempts = 5;
+let reconnectAttempts = 0;
 
 let kioskPeer, kioskStream, kioskVideo;
-let speed = 1.0;
-let turn = 1.0;
+
 
 kioskVideo = document.getElementById('remoteVideo');
 
+// const websocketURL =  'wss://telepresencerobot.duckdns.org'
+const websocketURL = 'ws://192.168.1.135:8080'
+
 //using a dynamic dns makes it easier to transport between places, as I don't have to reupdate the server code
-const ros = new ROSLIB.Ros({ url : 'wss://telepresencerobot.duckdns.org' });
+const ros = new ROSLIB.Ros({ url : websocketURL});
     ros.on('connection', () => {
     socket.emit('rosbridge status', 'successful')
     console.log("Successful RosBridge Websocket Connection");
@@ -21,12 +32,30 @@ const ros = new ROSLIB.Ros({ url : 'wss://telepresencerobot.duckdns.org' });
 
 ros.on('error', (error) => {
     console.log("Error RosBridge Websocket Connection");
-    socket.emit('rosbridge status', 'error')
+    socket.emit('rosbridge status', 'error');
+    if (reconnectAttempts < maxReconnectAttempts) {
+        reconnectAttempts++;
+        setTimeout(() => {
+            ros.connect(websocketURL);
+        }, 1000); // Retry in 5 seconds
+    } else {
+        console.log("Max reconnect attempts reached. Reloading...");
+        window.location.reload(); // Reload as a last resort
+    }
 });
 
 ros.on('close', () => {
     console.log("Closed RosBridge Websocket Connection");
-    socket.emit('rosbridge status', 'closed')
+    socket.emit('rosbridge status', 'closed');
+    if (reconnectAttempts < maxReconnectAttempts) {
+        reconnectAttempts++;
+        setTimeout(() => {
+            ros.connect(websocketURL);
+        }, 1000); // Retry in 1 seconds
+    } else {
+        console.log("Max reconnect attempts reached. Reloading...");
+        window.location.reload(); // Reload as a last resort
+    }
 });
 
 const cmd_vel_publisher = new ROSLIB.Topic({
@@ -106,6 +135,7 @@ function InitKiosk() {
 
     kioskPeer.on('connect', () => {
         kioskVideo.style.visibility = "visible";
+        socket.emit('speed', speed)
     })
 }
 
@@ -115,9 +145,10 @@ function readKey(key){
     Takes keystroke and publishes velocity command to the /cmd_vel topic
      */
     let xlin = 0.0, ylin = 0.0, zlin = 0.0, th = 0.0;
-    let speed_multiplier = 1.0, turn_multiplier = 1.0;
+    let speed_modifier = 1.0, turn_modifier = 1.0;
     if (key in moveBindings){
         [xlin, ylin, zlin, th] = moveBindings[key];
+
 
         let twist_msg = {
             linear: {
@@ -131,15 +162,24 @@ function readKey(key){
                 z: th*turn
             }
         };
+
+        //force backing up to be much slower
+        if (twist_msg.linear.x < 0){
+            twist_msg.linear.x = -0.1;
+        }
+
         const teleop_input = new ROSLIB.Message(twist_msg);
 
         cmd_vel_publisher.publish(teleop_input);
     }
     else if (key in speedBindings){
-        [speed_multiplier, turn_multiplier] = speedBindings[key];
+        [speed_modifier, turn_modifier] = speedBindings[key];
 
-        speed = Math.min(speed_multiplier*speed, speed_limit);
-        turn = Math.min(turn_multiplier*speed, turn_limit);
+        speed = Math.min(speed_modifier+speed, speed_limit);
+        speed = Math.max(speed, min_speed_limit)
+        turn = Math.min(turn_modifier+turn, turn_limit);
+        turn = Math.max(turn, min_turn_limit);
+        socket.emit('speed', speed)
     }        
     else if (key in gimbalBindings){
         console.log(gimbalBindings[key])

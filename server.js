@@ -42,6 +42,10 @@ io.on('connection', (socket) => {
     socket.on('rosbridge status', (data) => {
         logMessage('Rosbridge Status', data)
     });
+
+    socket.on('speed', (data) => {
+        socket.broadcast.emit('speed', data);
+    })
 });
 
 

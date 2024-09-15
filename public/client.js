@@ -3,16 +3,23 @@ import { speedBindings, gimbalBindings, moveBindings } from './bindings.js';
 const socket = io({
     query: { page: 'client' }
 });
-let clientPeer, localStream, kioskVideo, clientVideo, rosbridgeStatus;
+let clientPeer, localStream, kioskVideo, clientVideo, rosbridgeStatus, infoSpeed;
 
 kioskVideo = document.getElementById('remoteVideo');
 clientVideo = document.getElementById('localVideo');
 rosbridgeStatus = document.getElementById('status');
+infoSpeed = document.getElementById('speed-info')
 
 /*
 TODO
 Make client ping kiosk browser for rosbridge status
 */
+
+socket.on('speed', (speed) => {
+    let displaySpeed = 0;
+    displaySpeed = Math.round(speed*100);
+    infoSpeed.innerHTML = `Speed: ${displaySpeed}`;
+})
 
 // Request user media
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
@@ -75,3 +82,4 @@ function sendKey(e) {
         console.log(key, 'is not a valid key stroke');
     }    
 }
+
