@@ -20,8 +20,9 @@ let kioskPeer, kioskStream, kioskVideo;
 
 kioskVideo = document.getElementById('remoteVideo');
 
-// const websocketURL =  'wss://telepresencerobot.duckdns.org'
-const websocketURL = 'ws://192.168.1.135:8080'
+// const websocketURL = 'ws://192.168.1.135:8080'
+const websocketURL =  'wss://telepresencerobot.duckdns.org'
+
 
 //using a dynamic dns makes it easier to transport between places, as I don't have to reupdate the server code
 const ros = new ROSLIB.Ros({ url : websocketURL});
