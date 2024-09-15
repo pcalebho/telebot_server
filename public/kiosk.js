@@ -154,7 +154,7 @@ function readKey(key){
     Takes keystroke and publishes velocity command to the /cmd_vel topic
      */
     let xlin = 0.0, ylin = 0.0, zlin = 0.0, th = 0.0;
-    let speed_modifier = 1.0, turn_modifier = 1.0;
+    let speed_modifier = 0, turn_modifier = 0;
     if (key in moveBindings){
         [xlin, ylin, zlin, th] = moveBindings[key];
 
