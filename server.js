@@ -40,7 +40,10 @@ io.on('connection', (socket) => {
     });
 
     socket.on('rosbridge status', (data) => {
-        logMessage('Rosbridge Status', data)
+        socket.broadcast.emit('rosbridge status', data)
+        if (data != "connected"){
+            logMessage('Rosbridge Status', data);
+        }
     });
 
     socket.on('speed', (data) => {

@@ -25,7 +25,8 @@ const websocketURL = 'ws://192.168.1.135:8080'
 
 //using a dynamic dns makes it easier to transport between places, as I don't have to reupdate the server code
 const ros = new ROSLIB.Ros({ url : websocketURL});
-    ros.on('connection', () => {
+
+ros.on('connection', () => {
     socket.emit('rosbridge status', 'successful')
     console.log("Successful RosBridge Websocket Connection");
 });
@@ -57,6 +58,14 @@ ros.on('close', () => {
         window.location.reload(); // Reload as a last resort
     }
 });
+
+setInterval(function() {
+    if (ros.isConnected) {
+        socket.emit('rosbridge status', 'connected')
+    } else {
+        socket.emit('rosbridge status', 'disconnected')
+    }
+}, 5000); // Send status every 5 seconds
 
 const cmd_vel_publisher = new ROSLIB.Topic({
     ros,

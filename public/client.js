@@ -7,8 +7,8 @@ let clientPeer, localStream, kioskVideo, clientVideo, rosbridgeStatus, infoSpeed
 
 kioskVideo = document.getElementById('remoteVideo');
 clientVideo = document.getElementById('localVideo');
-rosbridgeStatus = document.getElementById('status');
-infoSpeed = document.getElementById('speed-info')
+infoSpeed = document.getElementById('speed-info');
+rosbridgeStatus = document.getElementById('ros-info');
 
 /*
 TODO
@@ -19,7 +19,11 @@ socket.on('speed', (speed) => {
     let displaySpeed = 0;
     displaySpeed = Math.round(speed*100);
     infoSpeed.innerHTML = `Speed: ${displaySpeed}`;
-})
+});
+
+socket.on('rosbridge status', (status) => {
+    rosbridgeStatus.innerHTML = `Rosbridge Status: ${status}`;
+});
 
 // Request user media
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
