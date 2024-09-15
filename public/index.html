@@ -15,7 +15,7 @@
     .video-container {
       position: relative;
       width: 800px; /* Set desired width */
-      height: 600px; /* Set desired height */
+      height: 75vh; /* Set desired height */
       background-color: #8d7a7a; /* Optional background color */
       overflow: hidden; /* Optional, hides any overflow */
     }
@@ -24,12 +24,14 @@
       width: 200px;
       padding: 0;
       margin: 5px;
+      font-size: small;
     }
   
     .info-box {
       display: flex;
       flex-direction: row;
       justify-content: space-evenly;
+      align-items: center;
       width: 800px;
     }
 
@@ -37,17 +39,15 @@
       position: absolute;
       top: 0;
       left: 0;
-      width: 100%;
+      max-width: 100%;
       height: 100%;
       object-fit: cover; /* Cover the entire container */
     }
 
     /* Specific styles for each video */
     #localVideo {
-        width: 200px; /* Smaller width for local video */
+        max-width: 100%; /* Smaller width for local video */
         height: 150px; /* Smaller height for local video */
-        bottom: 10px; /* Position local video near the bottom */
-        right: 10px;  /* Position local video near the right side */
     }
 
   </style>
@@ -58,13 +58,14 @@
     </div>
     <div class="info-box">
       <div style="display: flex; flex-direction: column; margin-top: 20px;">
-        <p><b>W,A,S,D</b> to move around</p>
-        <p><b>Q</b> and <b>E</b> keys changes the speed</p>
-        <p>Up and down arrow keys to adjust the camera position</p>
+        <p><b>W,A,S,D,Q,E</b> to move around</p>
+        <p><b>LEFT</b> and <b>RIGHT</b> arrow keys changes the speed</p>
+        <p><b>UP</b> and <b>DOWN</b> arrow keys to adjust the camera position</p>
       </div>
       <div style="display: flex; flex-direction: column; margin-top: 20px;">
         <!-- <div id="status">Rosbridge status: N/A</div>  -->
         <div id="speed-info" style="margin-top: 5px">Speed: N/A</div>
+        <div id="ros-info">Rosbridge Status: N/A</div>
       </div>
     </div>
   
