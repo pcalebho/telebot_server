@@ -1,6 +1,8 @@
 import { speedBindings, gimbalBindings, moveBindings } from './bindings.js';
 
-const socket = io();
+const socket = io({
+    query: { page: 'kiosk' }
+});
 const speed_limit = 1000.0;
 const turn_limit = 50.0;
 

@@ -1,6 +1,8 @@
 import { speedBindings, gimbalBindings, moveBindings } from './bindings.js';
 
-const socket = io();
+const socket = io({
+    query: { page: 'client' }
+});
 let clientPeer, localStream, kioskVideo, clientVideo, rosbridgeStatus;
 
 kioskVideo = document.getElementById('remoteVideo');
