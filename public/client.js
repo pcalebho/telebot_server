@@ -25,6 +25,11 @@ socket.on('rosbridge status', (status) => {
     rosbridgeStatus.innerHTML = `Rosbridge Status: ${status}`;
 });
 
+socket.on('redirect', (data) => {
+    // Redirect to waiting.html
+    window.location.href = 'waiting.html';
+});
+
 // Request user media
 navigator.mediaDevices.getUserMedia({ video: true, audio: true })
     .then((stream) => {

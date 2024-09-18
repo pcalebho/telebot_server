@@ -11,6 +11,7 @@ let connectedUser = null; // Store the ID of the currently connected user
 
 //find the path where this was located
 const path = require('path');
+const { connected } = require('process');
 
 // Serve static files from the "public" directory
 app.use(express.static(path.join(__dirname, '/public')));
@@ -22,6 +23,16 @@ io.on('connection', (socket) => {
 
     logMessage(`${page} connected:`, socket.id);
 
+    if (connectedUser) {
+        logMessage(`User already connected: ${connectedUser}. Disconnecting new user: ${socket.id}`);
+        socket.emit('redirect', { message: 'Another user is already connected. Please try again later.' });
+        socket.disconnect(); // Disconnect the new user
+        return; // Exit the connection handler
+    }
+
+    if (page == "client"){
+        connectedUser = socket.id;
+    }
 
     //Send Client WebRTC offer to Kiosk's Browser
     socket.on('offer', (offer) => {
@@ -37,6 +48,9 @@ io.on('connection', (socket) => {
 
     socket.on('disconnect', () => {
         logMessage(`${page} disconnected:`, socket.id);
+        if (page == "client"){
+            connectedUser = null;
+        }
     });
 
     socket.on('rosbridge status', (data) => {
@@ -48,7 +62,7 @@ io.on('connection', (socket) => {
 
     socket.on('speed', (data) => {
         socket.broadcast.emit('speed', data);
-    })
+    });
 });
 
 
