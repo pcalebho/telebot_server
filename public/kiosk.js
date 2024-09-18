@@ -15,7 +15,7 @@ let turn = 0.5;
 const maxReconnectAttempts = 5;
 let reconnectAttempts = 0;
 
-let kioskPeer, kioskStream, kioskVideo, websocketURL, ros, cmd_vel_publisher, gimbal_cmd_publisher;
+let kioskPeer, kioskStream, kioskVideo, cmd_vel_publisher, gimbal_cmd_publisher;
 
 
 kioskVideo = document.getElementById('remoteVideo');
@@ -59,27 +59,25 @@ ros.on('close', () => {
     }
 });
 
-    setInterval(function() {
-        if (ros.isConnected) {
-            socket.emit('rosbridge status', 'connected')
-        } else {
-            socket.emit('rosbridge status', 'disconnected')
-        }
-    }, 5000); // Send status every 5 seconds
+setInterval(function() {
+    if (ros.isConnected) {
+        socket.emit('rosbridge status', 'connected')
+    } else {
+        socket.emit('rosbridge status', 'disconnected')
+    }
+}, 5000); // Send status every 5 seconds
 
-    cmd_vel_publisher = new ROSLIB.Topic({
-        ros,
-        name: "/cmd_vel",
-        messageType: "geometry_msgs/Twist"
-    });
-    
-    gimbal_cmd_publisher = new ROSLIB.Topic({
-        ros,
-        name: "/gimbal_command",
-        messageType: "std_msgs/Bool"
-    });   
-}
+cmd_vel_publisher = new ROSLIB.Topic({
+    ros,
+    name: "/cmd_vel",
+    messageType: "geometry_msgs/Twist"
+});
 
+gimbal_cmd_publisher = new ROSLIB.Topic({
+    ros,
+    name: "/gimbal_command",
+    messageType: "std_msgs/Bool"
+});   
 
 
 
@@ -139,6 +137,7 @@ function InitKiosk() {
         if (sentKey == "dock" || sentKey == "undock"){
             readAction(sentKey);
         } else {
+            console.log('Moving');
             readKey(sentKey)
         }
     });
@@ -192,6 +191,7 @@ function readKey(key){
     /*
     Takes keystroke and publishes velocity command to the /cmd_vel topic
      */
+    console.log(key);
     let xlin = 0.0, ylin = 0.0, zlin = 0.0, th = 0.0;
     let speed_modifier = 1.0, turn_modifier = 1.0;
     if (key in moveBindings){
