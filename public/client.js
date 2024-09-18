@@ -10,6 +10,9 @@ clientVideo = document.getElementById('localVideo');
 infoSpeed = document.getElementById('speed-info');
 rosbridgeStatus = document.getElementById('ros-info');
 
+const dockButton = document.getElementById('dock-button');
+const undockButton = document.getElementById('undock-button');
+
 /*
 TODO
 Make client ping kiosk browser for rosbridge status
@@ -74,6 +77,8 @@ function InitPeer() {
 
     clientPeer.on('connect', () => {
         window.addEventListener("keydown", sendKey);
+        dockButton.addEventListener('click',  () => sendAction('dock'));
+        undockButton.addEventListener('click', () => sendAction('undock'));
     });
 }
 
@@ -85,5 +90,9 @@ function sendKey(e) {
     } else {
         console.log(key, 'is not a valid key stroke');
     }    
+}
+
+function sendAction(action) {
+    clientPeer.send(action);
 }
 

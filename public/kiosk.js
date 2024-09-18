@@ -15,7 +15,7 @@ let turn = 0.5;
 const maxReconnectAttempts = 5;
 let reconnectAttempts = 0;
 
-let kioskPeer, kioskStream, kioskVideo;
+let kioskPeer, kioskStream, kioskVideo, websocketURL, ros, cmd_vel_publisher, gimbal_cmd_publisher;
 
 
 kioskVideo = document.getElementById('remoteVideo');
@@ -59,25 +59,28 @@ ros.on('close', () => {
     }
 });
 
-setInterval(function() {
-    if (ros.isConnected) {
-        socket.emit('rosbridge status', 'connected')
-    } else {
-        socket.emit('rosbridge status', 'disconnected')
-    }
-}, 5000); // Send status every 5 seconds
+    setInterval(function() {
+        if (ros.isConnected) {
+            socket.emit('rosbridge status', 'connected')
+        } else {
+            socket.emit('rosbridge status', 'disconnected')
+        }
+    }, 5000); // Send status every 5 seconds
 
-const cmd_vel_publisher = new ROSLIB.Topic({
-    ros,
-    name: "/cmd_vel",
-    messageType: "geometry_msgs/Twist"
-});
+    cmd_vel_publisher = new ROSLIB.Topic({
+        ros,
+        name: "/cmd_vel",
+        messageType: "geometry_msgs/Twist"
+    });
+    
+    gimbal_cmd_publisher = new ROSLIB.Topic({
+        ros,
+        name: "/gimbal_command",
+        messageType: "std_msgs/Bool"
+    });   
+}
 
-const gimbal_cmd_publisher = new ROSLIB.Topic({
-    ros,
-    name: "/gimbal_command",
-    messageType: "std_msgs/Bool"
-})
+
 
 
 // Request user media
@@ -133,7 +136,11 @@ function InitKiosk() {
         const sentKey = decoder.decode(data);
         console.log('Sent Key', sentKey);
 
-        readKey(sentKey)
+        if (sentKey == "dock" || sentKey == "undock"){
+            readAction(sentKey);
+        } else {
+            readKey(sentKey)
+        }
     });
 
     kioskPeer.on('error', () => {
@@ -146,6 +153,38 @@ function InitKiosk() {
         kioskVideo.style.visibility = "visible";
         socket.emit('speed', speed)
     })
+}
+
+function readAction(action){
+    if (action == "dock") {
+        // Create the Action Client for /dock action server
+        const dockClient = new ROSLIB.ActionClient({
+            ros: ros,
+            serverName: '/dock',  // The action server name
+            actionName: 'irobot_create_msgs/action/Dock',  // The action type
+            timeout: 5000
+        });
+
+        // Create an empty goal message
+        const dockGoal = new ROSLIB.Goal({
+            actionClient: dockClient,
+            goalMessage: {}  // Empty goal message
+        });
+        // Send the goal to the /dock action server
+        dockGoal.send();
+
+        // Listen for the result (when the action completes)
+        dockGoal.on('result', function(result) {
+            console.log('Docking action result: ', result);
+        });
+
+        // Listen for the status of the goal
+        dockGoal.on('status', function(status) {
+            console.log('Goal status: ', status);
+        });
+    } else if (action == "undock"){
+
+    }
 }
 
 

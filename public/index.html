@@ -50,6 +50,12 @@
         height: 150px; /* Smaller height for local video */
     }
 
+    .buttons {
+      margin-top: 10px;
+      display: flex;
+      gap: 10px;
+    }
+
   </style>
   <body>
     <div class="video-container">
@@ -66,7 +72,11 @@
         <!-- <div id="status">Rosbridge status: N/A</div>  -->
         <div id="speed-info" style="margin-top: 5px">Speed: N/A</div>
         <div id="ros-info">Rosbridge Status: N/A</div>
-        <div id="action-info">Actions: N/A</div>
+        <div id="action-info">Dock Status: N/A</div>
+        <div class="buttons">
+          <button id="dock-button">Dock</button>
+          <button id="undock-button">Undock</button>
+        </div>
       </div>
     </div>
   
