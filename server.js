@@ -23,14 +23,14 @@ io.on('connection', (socket) => {
 
     logMessage(`${page} connected:`, socket.id);
 
-    if (connectedUser) {
+    if (connectedUser && page == "client") {
         logMessage(`User already connected: ${connectedUser}. Disconnecting new user: ${socket.id}`);
-        socket.emit('redirect', { message: 'Another user is already connected. Please try again later.' });
+        socket.emit('redirect', "waiting.html");
         socket.disconnect(); // Disconnect the new user
         return; // Exit the connection handler
     }
 
-    if (page == "client" && connectedUser != null){
+    if (page == "client" && connectedUser == null){
         connectedUser = socket.id;
     }
 

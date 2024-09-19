@@ -27,7 +27,7 @@ socket.on('rosbridge status', (status) => {
 
 socket.on('redirect', (data) => {
     // Redirect to waiting.html
-    window.location.href = 'waiting.html';
+    window.location.href = data;
 });
 
 // Request user media
