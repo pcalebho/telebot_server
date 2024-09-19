@@ -30,7 +30,7 @@ io.on('connection', (socket) => {
         return; // Exit the connection handler
     }
 
-    if (page == "client"){
+    if (page == "client" && connectedUser != null){
         connectedUser = socket.id;
     }
 

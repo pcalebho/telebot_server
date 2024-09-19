@@ -37,8 +37,9 @@ ros.on('error', (error) => {
     if (reconnectAttempts < maxReconnectAttempts) {
         reconnectAttempts++;
         setTimeout(() => {
+            socket.emit('rosbridge status', 'retrying')
             ros.connect(websocketURL);
-        }, 1000); // Retry in 5 seconds
+        }, 1000); // Retry in 1 seconds
     } else {
         console.log("Max reconnect attempts reached. Reloading...");
         window.location.reload(); // Reload as a last resort
@@ -51,6 +52,7 @@ ros.on('close', () => {
     if (reconnectAttempts < maxReconnectAttempts) {
         reconnectAttempts++;
         setTimeout(() => {
+            socket.emit('rosbridge status', 'retrying')
             ros.connect(websocketURL);
         }, 1000); // Retry in 1 seconds
     } else {
